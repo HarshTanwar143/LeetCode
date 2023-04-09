@@ -14,7 +14,7 @@ Example 1:
 
 Input: nums = [3,2,3]
 Output: 3
-<p>
+</p>
 
 
 Example 2:
