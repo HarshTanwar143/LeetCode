@@ -1,0 +1,26 @@
+class Solution {
+public:
+    vector<int> searchRange(vector<int>& nums, int target) {
+        vector<int> ans;
+
+
+        if(binary_search(nums.begin(),nums.end(),target)){
+        auto lower = lower_bound(nums.begin(),nums.end(),target);
+        int first = lower - nums.begin();
+
+        auto upper = upper_bound(nums.begin(),nums.end(),target);
+        int last = upper - nums.begin() -1;
+
+        ans.push_back(first);
+        ans.push_back(last);
+        return ans;
+        }
+
+
+        else{
+            return {-1,-1};
+        }
+
+
+    }
+};
