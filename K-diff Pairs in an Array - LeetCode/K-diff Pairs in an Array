@@ -1,3 +1,5 @@
+// TWO POINTERS APPROACH
+
 class Solution {
 public:
     int findPairs(vector<int>& nums, int k) {
@@ -22,6 +24,52 @@ public:
 
             if(i==j){
                 j++;
+            }
+        }
+
+        return ans.size();
+    }
+};
+
+
+
+
+// BY USING BINARY SEARCH APPROACH
+
+class Solution {
+public:
+
+
+    int bs(vector<int> &v ,int s,int x){
+        int e = v.size()-1;
+        while(s<=e){
+            int mid = s+(e-s)/2;
+            if(v[mid] == x){
+                return mid;
+            }
+
+            else if(v[mid]> x){
+                e = mid-1;
+            }
+            
+            else{
+                s = mid+1;
+            }
+
+        }
+        return -1;
+    }
+
+
+    int findPairs(vector<int>& nums, int k) {
+        
+        sort(nums.begin(),nums.end());
+        set<pair<int,int> > ans;
+
+        for(int i = 0;i<nums.size();i++){
+
+            if(bs(nums,i+1,nums[i]+k) != -1){
+                ans.insert({nums[i],nums[i]+k});
             }
         }
 
