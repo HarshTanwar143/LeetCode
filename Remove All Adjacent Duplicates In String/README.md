@@ -1,8 +1,7 @@
 ### 1047. Remove All Adjacent Duplicates In String
 ## Easy
 
-5.7K
-221
+
 Companies
 You are given a string s consisting of lowercase English letters. A duplicate removal consists of choosing two adjacent and equal letters and removing them.
 
