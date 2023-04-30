@@ -1,26 +1,26 @@
 ### 680. Valid Palindrome II
 ### Easy
 
-Given a string s, return true if the s can be <br>palindrome after deleting at most one character from it.
+Given a string s, return true if the s can be palindrome after deleting at most one character from it.
 
  
 
-Example 1:
+Example 1:<br>
 
-Input: s = "aba"
-Output: true
-Example 2:
+Input: s = "aba"<br>
+Output: true<br><br>
+Example 2:<br>
 
-Input: s = "abca"
-Output: true
-Explanation: You could delete the character 'c'.
-Example 3:
+Input: s = "abca"<br>
+Output: true<br>
+Explanation: You could delete the character 'c'.<br><br>
+Example 3:<br>
 
-Input: s = "abc"
-Output: false
+Input: s = "abc"<br>
+Output: false<br><br><br>
  
 
-Constraints:
+Constraints:<br>
 
-1 <= s.length <= 105
-s consists of lowercase English letters.
+1 <= s.length <= 105<br>
+s consists of lowercase English letters.<br>
