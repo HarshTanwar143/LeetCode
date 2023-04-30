@@ -1,0 +1,31 @@
+class Solution {
+public:
+    int findMinDifference(vector<string>& timePoints) {
+        // STEP1 :: CONVERT INTO MINUTES
+        vector<int> time;
+        for(int i =0;i<timePoints.size();i++)
+        {
+            int hours = stoi(timePoints[i].substr(0,2));
+            int minutes = stoi(timePoints[i].substr(3,2));
+            int totalMinutes = hours*60 + minutes;
+            time.push_back(totalMinutes);
+        }
+
+        // STEP2 :: SORT THE MINUTES
+        sort(time.begin(),time.end());
+        int minDiff = INT_MAX;
+        
+        // STEP3 :: STORE THE MINIMUM DIFFERENCE
+        for(int i = 0; i<time.size()-1;i++)
+        {
+            minDiff = min(minDiff,time[i+1]-time[i]);
+        }
+
+        // STEP4 :: CHECK THE LAST DIFFERENCE
+        int lastDiff = (time[0] + 1440) - time[time.size() - 1];
+
+        minDiff = min(minDiff,lastDiff);
+
+        return minDiff;
+    }
+};
