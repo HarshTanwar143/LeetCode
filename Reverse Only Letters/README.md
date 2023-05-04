@@ -1,4 +1,4 @@
-# 917. Reverse Only Letters
+### 917. Reverse Only Letters
 ### Easy
 
 Given a string s, reverse the string according to the following rules:<br>
