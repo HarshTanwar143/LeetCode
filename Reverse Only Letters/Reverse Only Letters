@@ -1,0 +1,29 @@
+class Solution {
+public:
+
+    void solution(string &st){
+        int s = 0;
+        int e = st.length() - 1;
+        while(s<=e){        // O(n)
+            if(isalpha(st[s]) && isalpha(st[e])){
+                swap(st[s],st[e]);
+                s++,e--;
+            }
+
+            else if(!isalpha(st[s])){
+                s++;
+            }
+
+            else{
+                e--;
+            }
+
+        }
+        
+    }
+
+    string reverseOnlyLetters(string s) {
+        solution(s);
+        return s;
+    }
+};
