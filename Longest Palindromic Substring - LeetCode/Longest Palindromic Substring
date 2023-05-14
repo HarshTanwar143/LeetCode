@@ -1,0 +1,28 @@
+// IT IS A BRUTEFORCE SOLUTION THAT HAS TIME COMPLEXITY OF BIG O(N^3) , YOU CAN MAKE IT AN OPTIMAL SOLUTION BY USING THE CONCEPTS OF D.P.
+class Solution {
+public:
+
+    bool palindrome(string &s,int start, int end){
+        while(start<end){
+            if(s[start] != s[end]){
+                return false;
+            }
+            start++,end--;
+        }
+        return true;
+    }
+
+    string longestPalindrome(string s) {
+        string ans = "";
+
+        for(int i = 0;i<s.size();i++){
+            for(int j = i;j<s.size();j++){
+                if(palindrome(s,i,j)){
+                    string v = s.substr(i,j-i+1);
+                    ans = v.size()>ans.size()?v:ans;
+                }
+            }
+        }
+        return ans;
+    }
+};
