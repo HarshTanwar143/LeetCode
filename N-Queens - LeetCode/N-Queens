@@ -1,0 +1,109 @@
+class Solution {
+public:
+
+    unordered_map<int,bool> leftCheck;
+    unordered_map<int,bool> UpperleftCheck;
+    unordered_map<int,bool> BottomleftCheck;
+
+
+    void printBoard(int n,vector<vector<char>>&board,vector<vector<string>>&ans){
+        vector<string> temp;
+    for(int i = 0;i<n;i++){
+        string output;
+        for(int j = 0;j<n;j++){
+            output += board[i][j];
+        }
+        temp.push_back(output);
+    }
+    ans.push_back(temp);
+}
+
+bool isSafe(vector<vector<char>>&board,int col,int row,int n){
+    // int i = row;
+    // int j = col
+    
+    // // Left Row
+    // int j = col-1;
+    // while(j>=0){
+    //     if(board[row][j] == 'Q'){
+    //         return false;
+    //     }
+    //     j--;
+    // }
+
+    // //upper left diagonal
+    // int i = row-1;
+    // j = col-1;
+    // while(i>=0 && j>=0){
+    //     if(board[i][j] == 'Q'){
+    //         return false;
+    //     }
+    //     i--;
+    //     j--;
+    // }
+
+    // //bottom left diagonal
+    // i = row+1;
+    // j = col-1;
+    // while(i<n && j>=0){
+    //     if(board[i][j] == 'Q'){
+    //         return false;
+    //     }
+    //     i++;
+    //     j--;
+    // }
+
+
+    // return true;
+
+    if(leftCheck[row])
+    return false;
+
+    if(UpperleftCheck[(n-1)+(col-row)])
+    return false;
+
+    if(BottomleftCheck[row+col])
+    return false;
+
+    return true;
+}
+
+    void N_QueensPlacing(int col,int &n,vector<vector<char>>&board,vector<vector<string>>&ans){
+    // base case
+    if(col >= n){
+        printBoard(n,board,ans);
+        return;
+    }
+
+    // check for each cell
+    for(int row=0;row<n;row++){
+        if(isSafe(board,col,row,n)){
+            // place Queen (Q)
+            leftCheck[row] = true;
+            UpperleftCheck[n-1+(col-row)] = true;
+            BottomleftCheck[row+col] = true;
+            board[row][col] = 'Q';
+            // Recursive call 
+            N_QueensPlacing(col+1,n,board,ans);
+            // Backtrack (queesn ko vapas se unmark kar do)
+            board[row][col] = '.';
+            leftCheck[row] = false;
+            UpperleftCheck[n-1+(col-row)] = false;
+            BottomleftCheck[row+col] = false;
+        }
+    }
+
+}
+
+    vector<vector<string>> solveNQueens(int n) {
+        vector<vector<string>> ans;
+        int col = 0;
+
+        vector<vector<char>> board(n,vector<char>(n,'.'));
+        N_QueensPlacing(col,n,board,ans);
+
+        return ans;
+    }
+};
+
+
