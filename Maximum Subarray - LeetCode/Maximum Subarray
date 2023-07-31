@@ -1,0 +1,33 @@
+class Solution {
+public:
+
+    int maxSubArraySum(vector<int>&nums,int start,int end){
+        if(start >= end) return nums[start];
+
+        int mid = start + ((end-start)>>1);
+        int maxLeftSum = maxSubArraySum(nums,start,mid);
+        int maxRightSum = maxSubArraySum(nums,mid+1,end);
+
+        int leftsum = 0 ,rightsum = 0,maxleftsum = INT_MIN, maxrightsum = INT_MIN;
+        for(int i = mid;i>=start;--i){
+            leftsum += nums[i];
+            if(leftsum > maxleftsum) {
+                maxleftsum = leftsum;
+            }
+        }
+
+        for(int i = mid+1;i<=end;++i){
+            rightsum += nums[i];
+            if(rightsum > maxrightsum) {
+                maxrightsum = rightsum;
+            }
+        }
+        int crossbordersum = maxleftsum + maxrightsum;
+
+        return max(maxLeftSum,max(maxRightSum,crossbordersum));
+    }
+
+    int maxSubArray(vector<int>& nums) {
+        return maxSubArraySum(nums,0,nums.size()-1);
+    }
+};
