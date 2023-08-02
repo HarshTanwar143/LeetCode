@@ -1,0 +1,30 @@
+class Solution {
+public:
+
+    void permute_helper(vector<int>&nums,vector<vector<int>>&ans,int i){
+            // BASE CASE
+            if(i>=nums.size() ) {
+                ans.push_back(nums);
+                return ;
+            }
+
+            unordered_map <int, bool> visited;
+
+            for(int j = i;j<nums.size();j++){
+                if(visited.find(nums[j]) != visited.end()){
+                    continue;
+                }
+                visited[nums[j]] = true;
+
+                swap(nums[i],nums[j]);
+                permute_helper(nums,ans,i+1);
+                swap(nums[i],nums[j]);
+            }
+    }
+
+    vector<vector<int>> permuteUnique(vector<int>& nums) {
+        vector<vector<int>> ans;
+        permute_helper(nums,ans,0);
+        return ans;
+    }
+};
