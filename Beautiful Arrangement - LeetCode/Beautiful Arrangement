@@ -1,0 +1,27 @@
+class Solution {
+public:
+
+    void countHelper(int &n,vector<int>&perm,int&ans,int currnum){
+        // BASE CASE
+        if(currnum == n+1){
+            ++ans;
+            return;
+        }
+
+        for(int i = 1;i<=n;i++){
+
+            if((currnum%i == 0 || i%currnum == 0) && perm[i] == 0){
+                perm[i] = currnum;
+                countHelper(n,perm,ans,currnum+1);
+                perm[i] = 0;
+            }
+        }
+    }
+
+    int countArrangement(int n) {
+        int ans = 0;
+        vector<int> perm(n+1);
+        countHelper(n,perm,ans,1);
+        return ans;
+    }
+};
