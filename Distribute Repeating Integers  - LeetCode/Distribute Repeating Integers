@@ -1,0 +1,39 @@
+class Solution {
+public:
+
+    bool helper(vector<int>&count,vector<int>&quantity,int qtnindex){
+        // BASE CASE 
+        if(qtnindex == quantity.size()){
+            return true;
+        }
+
+        // RE CALL 
+        for(int i = 0 ;i<count.size();i++){
+            if(count[i] >= quantity[qtnindex]){
+                count[i] -= quantity[qtnindex];
+                if (helper(count,quantity,qtnindex+1)){
+                    return true;
+                }
+                // BACKTRACKING
+                count[i] += quantity[qtnindex];
+            }
+
+        }
+        return false;
+    }
+
+    bool canDistribute(vector<int>& nums, vector<int>& quantity) {
+        unordered_map <int,int> mp;
+        for(auto i : nums){
+            mp[i]++;
+        }
+        vector<int>count;
+
+        for(auto it : mp){
+            count.push_back(it.second);
+        }
+
+        sort(quantity.rbegin(),quantity.rend());
+        return helper(count,quantity,0);
+    }
+};
