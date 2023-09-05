@@ -1,0 +1,77 @@
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    Node* next;
+    Node* random;
+    
+    Node(int _val) {
+        val = _val;
+        next = NULL;
+        random = NULL;
+    }
+};
+*/
+
+class Solution {
+public:
+
+    // Node* NewLLRec(Node* head,  unordered_map<Node*,Node*>&mp){
+    //     // BASE CASE
+    //     if(head == NULL) return 0;
+
+    //     // Make a new LL and  Entry in Map
+    //     Node* newHead = new Node(head->val);
+    //     mp[head] = newHead;
+    //     newHead->next = NewLLRec(head->next,mp);
+
+    //     // random pointer in new LL
+    //     if(head->random){
+    //         newHead->random = mp[head->random];
+    //     }
+    //     return newHead;
+    // }
+
+
+    Node* copyRandomList(Node* head) {
+        if(head == 0) return 0;
+
+        // Modify or clone LL
+        Node* oldHead = head;
+        while(oldHead){
+            Node* NewHead = new Node(oldHead->val);
+            NewHead->next = oldHead->next;
+            oldHead->next = NewHead;
+            oldHead = oldHead->next->next;
+        }
+
+        // point the random of newHeads
+        oldHead = head;
+        while(oldHead){
+            Node* temp = oldHead->next;
+            if(!oldHead->random){
+                temp->random = 0;
+            }
+            else{
+                temp->random = (oldHead->random)->next;
+            }
+            oldHead = oldHead->next->next;
+        }
+
+        // Detach the new LL and old LL
+        oldHead = head;
+        Node* clonedHead = oldHead->next;
+        while(oldHead){
+            Node* clone = oldHead->next;
+            oldHead->next = oldHead->next->next;
+            if(clone->next){
+                clone->next = clone->next->next;
+            }
+            oldHead = oldHead->next;
+        }
+
+        return clonedHead;
+
+    }
+};
