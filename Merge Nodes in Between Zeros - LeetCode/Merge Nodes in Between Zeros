@@ -10,7 +10,9 @@
  */
 class Solution {
 public:
-    ListNode* mergeNodes(ListNode* head) {x
+    ListNode* mergeNodes(ListNode* head) {
+        if(!head) return head;
+
         ListNode*fast = head->next;
         ListNode*slow = head;
         ListNode*LastNode ;
