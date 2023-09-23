@@ -1,0 +1,52 @@
+class Solution {
+public:
+
+    vector<int> NextMin(vector<int>&v){
+        stack<int> st;
+        st.push(-1);
+        vector<int> ans(v.size());
+        for(int i=v.size()-1;i>=0;--i){
+            int ele = v[i];
+            while(st.top()!=-1 && v[st.top()]>=ele){
+                st.pop();
+            }
+            ans[i] = st.top();
+            st.push(i);
+        }
+        return ans;
+    }
+
+    vector<int> PrevMin(vector<int>&v){
+        stack<int>st;   
+        st.push(-1);
+        vector<int>ans(v.size());
+        for(int i = 0;i<v.size();i++){
+            int ele = v[i];
+            while(st.top()!=-1 && v[st.top()]>=ele){
+                st.pop();
+            }
+            ans[i] = st.top();
+            st.push(i);
+        }
+        return ans;
+    }
+
+    int largestRectangleArea(vector<int>& heights) {
+        vector<int> Next = NextMin(heights);
+        vector<int> Prev = PrevMin(heights);
+
+        int MaxArea = INT_MIN;
+        int size = heights.size();
+        for(int i = 0;i<heights.size();i++){
+            if(Next[i] == -1){
+                Next[i] = size;
+            }
+
+            int width = heights[i];
+            int length = Next[i]-Prev[i]-1;
+            int Area = width*length;
+            MaxArea = max(MaxArea,Area);
+        }
+        return MaxArea;
+    }
+};
