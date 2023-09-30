@@ -1,0 +1,39 @@
+class Solution {
+public:
+
+    void reverse(stack<string>&st,string&ans){
+        if(st.empty())  return ;
+
+        string minPath = st.top();
+        st.pop();
+        reverse(st,ans);
+        ans += minPath;
+    }
+
+    string simplifyPath(string path) {
+        stack<string> st;
+        int i = 0;
+        while(i<path.size()){
+            int s = i;
+            int e = i+1;
+            while(e<path.size() && path[e]!='/') {
+                e++;
+            }
+            i = e;
+            string minPath = path.substr(s,e-s);
+            cout << minPath << endl;
+            if(minPath=="/" || minPath=="/.") {
+                continue;
+            }
+            else if(minPath!="/.."){
+                st.push(minPath);
+            }
+            else if(!st.empty()){
+                st.pop();
+            }
+        }
+        string ans = st.empty()?"/":"";
+        reverse(st,ans);
+        return ans;
+    }
+};
