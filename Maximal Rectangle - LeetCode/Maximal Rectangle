@@ -1,0 +1,85 @@
+class Solution {
+public:
+
+    vector<int> NextMin(vector<int>& heights){
+        vector<int> ans(heights.size());
+        stack<int> st;
+        st.push(-1);
+
+        for(int i = heights.size()-1;i>=0;i--){
+            int ele = heights[i];
+            while(st.top()!=-1 && heights[st.top()]>=ele){
+                st.pop();
+            }
+            ans[i] = st.top();
+            st.push(i);
+        }
+        return ans;
+    }
+
+    vector<int> PrevMin(vector<int>& heights){
+        vector<int> ans(heights.size());
+        stack<int> st;
+        st.push(-1);
+
+        for(int i = 0;i<heights.size();i++){
+            int ele = heights[i];
+            while(st.top()!=-1 && heights[st.top()]>=ele){
+                st.pop();
+            }
+            ans[i] = st.top();
+            st.push(i);
+        }
+        return ans;
+    }
+
+    int HistogramArea(vector<int>& heights){
+        // next minimum index
+        vector<int> NextIndex = NextMin(heights);
+        // previous minimum index
+        vector<int> PrevIndex = PrevMin(heights);
+
+        int MaxArea = INT_MIN;
+        int size = heights.size();
+        for(int i = 0;i<heights.size();i++){
+            if(NextIndex[i] == -1){
+                NextIndex[i] = size;
+            }
+            int length = heights[i];
+            int width = NextIndex[i]-PrevIndex[i]-1;
+            int area = length*width;
+            MaxArea = max(area,MaxArea);
+        }
+        return MaxArea;
+    }
+
+
+    int maximalRectangle(vector<vector<char>>& matrix) {
+        vector<vector<int>> v ;
+        int row = matrix.size();
+        int col = matrix[0].size();
+        for(int i = 0;i<row;i++){
+            vector<int> temp;
+            for(int j = 0;j<col;j++){
+                temp.push_back(matrix[i][j] - '0');
+            }
+            v.push_back(temp);
+        }
+
+        int FinalArea = HistogramArea(v[0]);
+
+        for(int i=1;i<row;i++){
+            for(int j=0;j<col;j++){
+                if(v[i][j]){
+                    v[i][j] += v[i-1][j];
+                }
+                else{
+                    v[i][j] = 0;
+                }
+            }
+            int Area = HistogramArea(v[i]);
+            FinalArea = max(Area,FinalArea);
+        }
+        return FinalArea;
+    }
+};
