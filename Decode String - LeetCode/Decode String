@@ -1,0 +1,46 @@
+class Solution {
+public:
+    string decodeString(string s) {
+        stack<string> st;
+
+        for(auto ch : s){       // it takes character
+            if(ch==']'){
+                string StringToCopy = "";
+                while(!st.empty() && st.top()!="["){
+                    StringToCopy += st.top();
+                    st.pop();
+                }
+                st.pop();        // for removing the "[" in stack
+
+                string TimesString;
+
+                while(!st.empty() && isdigit(st.top()[0])){ //because isdigit takes only char
+                    TimesString += st.top();
+                    st.pop();
+                }
+
+                reverse(TimesString.begin(),TimesString.end());
+                int Times = stoi(TimesString);
+
+                string PushString = "";
+                while(Times--){
+                    PushString += StringToCopy;
+                }
+                st.push(PushString);
+            }
+            else{
+                // first i have to convert this char into string, before pushing into stack
+                string temp(1,ch);
+                st.push(temp);
+            }
+        }
+
+        string ans = "";
+        while(!st.empty()){
+            ans += st.top();
+            st.pop();
+        }
+        reverse(ans.begin(),ans.end());
+        return ans;
+    }
+};
