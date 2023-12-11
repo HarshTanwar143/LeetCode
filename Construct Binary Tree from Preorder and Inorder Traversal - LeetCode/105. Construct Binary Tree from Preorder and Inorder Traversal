@@ -1,0 +1,54 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+
+    int findIndex(vector<int>& inorder,int size,int ele){
+        for(int i=0;i<size;++i){
+            if(inorder[i] == ele){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+
+    TreeNode* BuildHelper(vector<int>& preorder, vector<int>& inorder,int& size,int inStart,int inEnd,int &preIndex){
+        // Base case 
+        if(preIndex > size || inStart > inEnd){
+            return NULL;
+        }
+
+        // creating Node
+        int Data = preorder[preIndex++];
+        TreeNode* newNode = new TreeNode(Data);
+        int pos = findIndex(inorder,size,Data);
+
+        // left subtree
+        newNode->left = BuildHelper(preorder,inorder,size,inStart,pos-1,preIndex);
+
+        // right subtree
+        newNode->right = BuildHelper(preorder,inorder,size,pos+1,inEnd,preIndex);
+
+        // returning root Node
+        return newNode;
+    }
+
+
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+        int size = preorder.size();
+        int s = 0;
+        int e = size-1;
+        int preIndex = 0;
+        return BuildHelper(preorder,inorder,size,s,e,preIndex);
+    }
+};
