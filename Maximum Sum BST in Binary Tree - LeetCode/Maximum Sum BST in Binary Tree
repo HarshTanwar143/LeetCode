@@ -1,0 +1,76 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+
+class NodeData{
+    public:
+        int sum;
+        int max;
+        int min;
+        bool validBST;
+        
+        NodeData(){
+            
+        }
+        NodeData(int sum,int max,int min,bool valid){
+            this->sum = sum;
+            this->max = max;
+            this->min = min;
+            this->validBST = valid;
+        }
+};
+
+
+class Solution {
+public:
+
+    NodeData* solve(TreeNode*root,int&ans){
+        // BASE CASE
+        if(root==NULL){
+            NodeData* temp = new NodeData(0,INT_MIN,INT_MAX,true);
+            return temp;
+        }
+        
+        // left return 
+        NodeData* leftValue = solve(root->left,ans);
+        // right return 
+        NodeData* rightValue = solve(root->right,ans);
+        
+        // current Node
+        NodeData* currNode = new NodeData();
+        currNode->max = max(root->val,rightValue->max);
+        currNode->min = min(root->val,leftValue->min);
+        
+        if(leftValue->validBST && rightValue->validBST && 
+        (root->val > leftValue->max) && (root->val < rightValue->min) )
+        {
+            currNode->validBST = true;
+            currNode->sum = leftValue->sum + rightValue->sum + root->val;
+        }
+        else
+        {
+            currNode->validBST = false;
+        }
+
+        if(currNode->validBST){
+            ans = max(currNode->sum,ans);
+        }
+        
+        return currNode;
+    }
+
+
+    int maxSumBST(TreeNode* root) {
+        int ans = 0;
+    	solve(root,ans);
+    	return ans;
+    }
+};
