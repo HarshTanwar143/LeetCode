@@ -1,0 +1,23 @@
+Node* construct(int post[],int min,int max,int&i){
+    if(i < 0)
+        return NULL;
+        
+    Node* root = NULL;
+    
+    if(post[i] > min && post[i] < max){
+        root = new Node(post[i--]);
+        root->right = construct(post,root->data,max,i);
+        root->left = construct(post,min,root->data,i);
+    }
+    
+    return root;
+}
+
+
+Node *constructTree (int post[], int size)
+{
+//code here
+    int i = size-1;
+    Node* root = construct(post,INT_MIN,INT_MAX,i);
+    return root;
+}
