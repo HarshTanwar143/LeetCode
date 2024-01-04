@@ -1,0 +1,62 @@
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+
+class compare{
+    public:
+        bool operator()(ListNode* a,ListNode* b){
+            return a->val > b->val;
+        }
+};
+
+class Solution {
+public:
+
+//  TIME COMPLEXITY :: O(nklog(k))
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        int k = lists.size();
+        // Base case (when no lists are there)
+        if(k == 0)
+            return NULL;
+
+        priority_queue<ListNode*, vector<ListNode*> ,compare > minHeap;
+
+        // inserting k pointers in Min Heap
+        for(int i=0;i<k;i++){
+            if(lists[i] != NULL){
+                minHeap.push(lists[i]);
+            }
+        }
+
+        ListNode* head = NULL;
+        ListNode* tail = NULL;
+
+        while(!minHeap.empty()){
+            ListNode* temp = minHeap.top();
+            minHeap.pop();
+            // check whether it is our first node or not
+            if(head == NULL){       // when it is our first node
+                head = temp;
+                tail = temp;
+            }
+            else{                   // when it is not the first node
+                tail->next = temp;
+                tail = temp;
+            }
+
+            // inserting next node if available
+            if(temp->next != NULL){
+                minHeap.push(temp->next);
+            }
+        }
+        
+        return head;
+    }
+};
