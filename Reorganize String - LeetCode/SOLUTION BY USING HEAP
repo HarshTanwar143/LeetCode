@@ -1,0 +1,91 @@
+
+// SOLUTION BY USING HEAP
+// creating custom Heap
+class Node{
+    public:
+    char data;
+    int count;
+    Node(int d,int c){
+        data = d;
+        count = c;
+    }
+};
+
+// comparator for the custom Heap
+class compare{
+    public:
+        bool operator()(Node* a,Node* b){
+            return a->count < b->count;
+        }
+};
+
+class Solution {
+public:
+    string reorganizeString(string s) {
+        // Base case
+        if(s.empty())   return "";
+
+        // creating mapping
+        int arr[26] = {0};
+        for(int i=0;i<s.size();i++){
+            char ch = s[i];
+            arr[ch - 'a']++;
+        }
+
+
+        // creating Max-Heap
+        priority_queue<Node*, vector<Node*>, compare > maxHeap;
+
+        // inserting in Max-Heap
+        for(int i=0;i<26;i++){
+            if(arr[i] != 0){
+                maxHeap.push(new Node(i+'a' , arr[i]));
+            }
+        }
+
+        // running loop until 2 elements in the MaxHeap
+        string ans = "";
+        while(maxHeap.size() > 1){
+            Node* first = maxHeap.top();
+            maxHeap.pop();
+            Node* second = maxHeap.top();
+            maxHeap.pop();
+
+            ans += first->data;
+            ans += second->data;
+
+            first->count--;
+            second->count--;
+            
+            if(first->count != 0)
+                maxHeap.push(first);
+
+            if(second->count != 0)
+                maxHeap.push(second);
+        }
+
+        // Last element that remains in the maxHeap
+        if(maxHeap.size() == 1){
+            if(maxHeap.top()->count == 1){
+                ans += maxHeap.top()->data;
+                maxHeap.pop();
+            }
+            else{
+                ans = "";
+            }
+        }
+
+        return ans;
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
