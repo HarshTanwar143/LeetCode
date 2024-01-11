@@ -1,0 +1,69 @@
+class Node{
+    public:
+        int data;
+        int row;
+        int col;
+        Node(int d,int r,int c){
+            data = d;
+            row = r;
+            col = c;
+        }
+};
+
+class compare{
+    public:
+        bool operator()(Node* a,Node* b){
+            return a->data > b->data;
+        }
+};
+
+class Solution {
+public:
+    vector<int> smallestRange(vector<vector<int>>& nums) {
+        priority_queue<Node*,vector<Node*>,compare> minHeap;
+
+        int mini = INT_MAX;
+        int maxi = INT_MIN;
+
+        int k = nums.size();
+        for(int i=0;i<k;i++){
+            int element = nums[i][0];
+            mini = min(mini,element);
+            maxi = max(maxi,element);
+            minHeap.push(new Node(element,i,0));
+        }
+
+        int ansStart = mini;
+        int ansEnd = maxi;
+
+
+        while(!minHeap.empty()){
+            Node* topElement = minHeap.top();
+            int topData = topElement->data;
+            int topRow = topElement->row;
+            int topCol = topElement->col;
+            minHeap.pop();
+
+            int mini = topData;
+
+            if((ansEnd-ansStart) > (maxi-mini)){
+                ansEnd = maxi;
+                ansStart = mini;
+            }
+
+            if((topCol+1) < nums[topRow].size()){
+                maxi = max(maxi,nums[topRow][topCol+1]);
+                Node* temp = new Node(nums[topRow][topCol + 1],topRow,topCol+1);
+                minHeap.push(temp);
+            }
+            else{
+                break;
+            }
+        }
+
+        vector<int> ans;
+        ans.push_back(ansStart);
+        ans.push_back(ansEnd);
+        return ans;
+    }
+};
