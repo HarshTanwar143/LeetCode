@@ -1,0 +1,99 @@
+bool isUnderBoundary(vector<pair<int,int>>&v , vector<vector<int>>&grid){
+    int m = grid.size();
+    int n = grid[0].size();
+
+    for(auto i : v){
+        if(i.first < 0 || i.first >=m || i.second < 0 || i.second >= n){
+            return false;
+        }
+    }
+    return true;
+}
+
+
+bool getAllPoints(vector<vector<int>>&grid,int&delta,vector<pair<int,int>>&v,int&row,int&col){
+    pair<int,int> A = {row-delta,col};
+    pair<int,int> B = {row,col+delta};
+    pair<int,int> C = {row+delta,col};
+    pair<int,int> D = {row,col-delta};
+    v[0] = A;
+    v[1] = B;
+    v[2] = C;
+    v[3] = D;
+
+    if(isUnderBoundary(v,grid)){
+        return true;
+    }
+    return false;
+}
+
+void getAllCellSum(vector<vector<int>>&grid,priority_queue<int>&pq,int&row,int&col){
+    pq.push(grid[row][col]);
+    int delta = 1;
+    vector<pair<int,int>> v(4);
+
+    while(getAllPoints(grid,delta,v,row,col)){
+        int csum = 0;
+        csum = grid[v[0].first][v[0].second] + grid[v[1].first][v[1].second] + grid[v[2].first][v[2].second] + grid[v[3].first][v[3].second];
+        auto&A = v[0];
+        auto&B = v[1];
+        auto&C = v[2];
+        auto&D = v[3];
+
+        // cells from A to B
+        for(int i=1;i<(B.first-A.first);i++){
+            csum += grid[A.first+i][A.second+i];
+        }
+        // cells from B to C
+        for(int i=1;i<(C.first-B.first);i++){
+            csum += grid[B.first+i][B.second-i];
+        }
+        // cells from C to D
+        for(int i=1;i<(C.first-D.first);i++){
+            csum += grid[C.first-i][C.second-i];
+        }
+        // cells from D to A
+        for(int i=1;i<(D.first-A.first);i++){
+            csum += grid[D.first-i][D.second+i];
+        }
+
+        pq.push(csum);
+        delta += 1;
+    }
+}
+
+bool canInsert(vector<int>&ans,int&topEle){
+    for(auto i : ans){
+        if(i == topEle){
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+
+class Solution {
+public:
+    vector<int> getBiggestThree(vector<vector<int>>& grid) {
+        vector<int> ans;
+        priority_queue<int> pq;
+        int m = grid.size();
+        int n = grid[0].size();
+
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                getAllCellSum(grid,pq,i,j);
+            }
+        }
+
+        while(!pq.empty() && ans.size()<3){
+            auto topEle = pq.top();
+            pq.pop();
+            if(canInsert(ans,topEle)){
+                ans.push_back(topEle);
+            }
+        }
+        return ans;
+    }
+};
