@@ -1,0 +1,85 @@
+class TrieNode{
+    public:
+    char data;
+    TrieNode* children[58];
+    bool isTerminal;
+
+    TrieNode(char ch) : data(ch), isTerminal(false){
+        for(int i = 0;i<58;i++){
+            children[i] = 0;
+        }
+    }
+};
+
+
+class Trie {
+TrieNode* root;
+
+void insertTrie(TrieNode* root,string&word,int i){
+    if(word.size() <= i){
+        root->isTerminal = true;
+        return;
+    }
+
+    TrieNode* child;
+    int index = word[i] - 'A';
+    if(!root->children[index]){
+        root->children[index] = new TrieNode(word[i]);
+    }
+    insertTrie(root->children[index],word,i+1);
+}
+
+
+bool searchTrie(TrieNode* root,string&word,int i){
+    if(word.size() <= i){
+        return root->isTerminal;
+    }
+
+    int index = word[i] - 'A';
+    if(root->children[index]){
+        return searchTrie(root->children[index],word,i+1);
+    }
+    else if(islower(word[i])){
+        return searchTrie(root,word,i+1);
+    }
+    return false;
+}
+
+public:
+    Trie() {
+        root = new TrieNode('\0');
+    }   
+    
+    void insert(string word) {
+        insertTrie(root,word,0);
+    }
+    
+    bool search(string word) {
+        return searchTrie(root,word,0);
+    }
+    
+};
+
+/**
+ * Your Trie object will be instantiated and called as such:
+ * Trie* obj = new Trie();
+ * obj->insert(word);
+ * bool param_2 = obj->search(word);
+ * bool param_3 = obj->startsWith(prefix);
+ */
+
+
+class Solution {
+public:
+    vector<bool> camelMatch(vector<string>& queries, string pattern) {
+        vector<bool> ans;
+        Trie trie;
+        trie.insert(pattern);
+
+        for(auto query : queries){
+            ans.push_back(trie.search(query));
+        }
+
+        return ans;
+    }
+};
