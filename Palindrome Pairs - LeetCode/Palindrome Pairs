@@ -1,0 +1,146 @@
+class TrieNode{
+    public:
+    char data;
+    TrieNode* children[26];
+    int stringIndex ;
+
+    TrieNode(char ch) : data(ch), stringIndex(-1){
+        for(int i = 0;i<26;i++){
+            children[i] = 0;
+        }
+    }
+};
+
+
+class Trie {
+TrieNode* root;
+
+void insertTrie(TrieNode* root,string&word,int i,int&stIndex){
+    if(word.size() <= i){
+        root->stringIndex = stIndex;
+        return;
+    }
+
+    TrieNode* child;
+    int index = word[i] - 'a';
+    if(root->children[index] != NULL){
+        child = root->children[index];
+    }
+    else{
+        child = new TrieNode(word[i]);
+        root->children[index] = child;
+    }
+
+    insertTrie(child,word,i+1,stIndex);
+}
+
+
+// bool searchTrie(TrieNode* root,string&word,int i){
+//     if(word.size() <= i){
+//         return root->isTerminal;
+//     }
+
+//     int index = word[i] - 'a';
+//     if(root->children[index] == NULL){
+//         return false;
+//     }
+//     else{
+//         return searchTrie(root->children[index],word,i+1);
+//     }
+// }
+
+public:
+    Trie() {
+        root = new TrieNode('\0');
+    }   
+    
+    void insert(string&word, int& stIndex) {
+        insertTrie(root,word,0,stIndex);
+    }
+
+    bool isPalindrome(string&word,int low ,int high){
+        while(low <= high){
+            if(word[low] != word[high]){
+                return false;
+            }
+            ++low, --high;
+        }
+        return true;
+    }
+
+    void search2(TrieNode*root,vector<int>&myPalindrome, string s){
+        if(root->stringIndex != -1){
+            if(isPalindrome(s,0,s.size()-1))
+                myPalindrome.push_back(root->stringIndex);
+        }
+
+        for(int i=0;i<26;i++){
+            if(root->children[i] != 0){
+                s.push_back(i + 'a');
+                search2(root->children[i],myPalindrome,s);
+                s.pop_back();
+            }
+        }
+    }
+    
+    void search(string&word, vector<int>&myPalindrome) {
+        TrieNode* curr = root;
+
+        for(int i=0;i<word.size();i++){
+            int index = word[i] - 'a';
+
+            if(curr->stringIndex != -1){
+                if(isPalindrome(word,i,word.size()-1)){
+                    myPalindrome.push_back(curr->stringIndex);
+                }
+            }
+
+            if(curr->children[index]){
+                curr = curr->children[index];
+            }
+            else{
+                return ;
+            }
+        }
+
+        search2(curr,myPalindrome,"");
+    }
+    
+};
+
+/**
+ * Your Trie object will be instantiated and called as such:
+ * Trie* obj = new Trie();
+ * obj->insert(word);
+ * bool param_2 = obj->search(word);
+ * bool param_3 = obj->startsWith(prefix);
+ */
+
+class Solution {
+public:
+    vector<vector<int>> palindromePairs(vector<string>& words) {
+        vector<vector<int>> ans;
+        Trie trie;
+
+        for(int i=0;i<words.size();i++){
+            string revSt = words[i];
+            reverse(revSt.begin(),revSt.end());
+            trie.insert(revSt,i);
+        }
+
+        for(int i=0;i<words.size();i++){
+            vector<int> myPalindrome;
+
+            trie.search(words[i],myPalindrome);
+
+            for(auto it : myPalindrome){
+                if(it != i){
+                    ans.push_back({i,it});
+                }
+            }
+        }
+
+
+        return ans;
+    }
+};
