@@ -1,0 +1,22 @@
+class Solution {
+public:
+
+    int topdownDP(vector<int>&dp,int n){
+        // B.C.
+        if(n==0 || n==1)
+            return n;
+        // DP B.C.
+        if(dp[n] != -1)
+            return dp[n];
+
+        dp[n] = topdownDP(dp,n-1) + topdownDP(dp,n-2);
+
+        return dp[n];
+    }
+
+    int fib(int n) {
+        vector<int> dp(n+1,-1);
+        int ans = topdownDP(dp,n);
+        return ans;
+    }
+};
