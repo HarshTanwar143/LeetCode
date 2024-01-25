@@ -1,0 +1,95 @@
+class Solution {
+public:
+
+    // // RECURSIVE APPROACH WILL GIVE YOU TLE
+    // int recursiveApproach(vector<int>& coins, int amount){
+    //     // Base Case
+    //     if(amount == 0)
+    //         return 0;
+    //     if(amount < 0)
+    //         return INT_MAX;
+        
+    //     int mini = INT_MAX;
+    //     for(int i=0;i<coins.size();i++){
+    //         int ans = recursiveApproach(coins,amount-coins[i]);
+    //         if(ans != INT_MAX){
+    //             mini = min(mini,ans+1);
+    //         }
+    //     }
+
+    //     return mini;
+    // }
+
+    // // DP : TOPDOWN APPROACH
+    // int TopDownApproach(vector<int>& coins, int amount,vector<int>&dp){
+    //     // BASE CASE
+    //     if(amount == 0)
+    //         return 0;
+    //     if(amount < 0)
+    //         return INT_MAX;
+
+    //     // STEP-2 : BASE CASE FOR DP TOPDOWN
+    //     if(dp[amount] != -1)
+    //         return dp[amount];
+
+    //     int mini = INT_MAX;
+    //     for(int i = 0;i<coins.size();i++){
+    //         int ans = TopDownApproach(coins,amount - coins[i],dp);
+    //         if(ans != INT_MAX){
+    //             mini = min(mini,ans+1);
+    //         }
+    //         // STEP-3 : ASSIGN THE VALUE TO DP ACCORDINGLY
+    //         dp[amount] = mini;
+    //     }
+
+    //     return dp[amount];
+    // }
+
+    // // BOTTOM UP APPROACH
+    int BottomUp(vector<int>& coins, int amount){
+        // STEP-1 : DECLARING DP, ITS SIZE ANS VALUES
+        vector<int> dp(amount+1,INT_MAX);
+
+        // STEP-2 : WRITING BASE CASE FOR THE DP
+        dp[0] = 0;
+
+        // STEP-3 : CODE FOR THE BOTTOM-UP APPROACH (0 -> AMOUNT)
+        for(int target=1;target<=amount;target++){
+            int mini = INT_MAX;
+            for(int j=0;j<coins.size();j++){
+                if(target - coins[j] >= 0){
+                    int ans = dp[target - coins[j]];
+                    if(ans != INT_MAX){
+                        mini = min(mini,1+ans);
+                    }
+                }
+            }
+            dp[target] = mini;
+        }
+
+        return dp[amount];
+    }
+
+
+    int coinChange(vector<int>& coins, int amount) {
+        // // RECURSIVE APPROACH
+        // int ans = recursiveApproach(coins,amount);
+
+        // // DP : TOPDOWN APPROACH
+        // // STEP-1 : CREATING DP
+        // vector<int> dp(amount+1,-1);
+        // int ans = TopDownApproach(coins, amount,dp);
+        // if(ans == INT_MAX)
+        //     return -1;
+        // else 
+        //     return ans;
+
+
+        // // DP : BOTTOM UP APPROACH
+        int ans = BottomUp(coins,amount);
+        if(ans == INT_MAX)
+            return -1;
+        else
+            return ans;
+    }
+};
