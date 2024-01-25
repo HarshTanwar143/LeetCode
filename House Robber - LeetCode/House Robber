@@ -1,0 +1,100 @@
+class Solution {
+public:
+
+    // // RECURSIVELY
+    int RecSolve(vector<int>&nums,int n){
+        if(n < 0)
+            return 0;
+        if(n == 0)
+            return nums[0];
+
+        int include = nums[n] + RecSolve(nums,n-2);
+        int exclude = 0 + RecSolve(nums,n-1);
+
+        return max(include,exclude);
+    }
+
+    // TOP-DOWN APPROACH
+    int TopDown(vector<int>&nums,int n,vector<int>&dp){
+        if(n < 0)
+            return 0;
+        if(n == 0)
+            return nums[0];
+
+        if(dp[n] != -1)     // STEP - 2
+            return dp[n];
+
+        int include = nums[n] + TopDown(nums,n - 2,dp);
+        int exclude = 0 + TopDown(nums,n - 1,dp);
+
+        dp[n] = max(include,exclude);   // STEP - 3
+        return dp[n];
+    }
+
+    // BOTTOM-UP APPROACH
+    int BottomUp(vector<int>&nums,int n){
+        vector<int> dp(n+1,0);  // STEP - 1
+
+        dp[0] = nums[0];    // STEP - 2
+
+        // STEP - 3
+        for(int i = 1;i<nums.size();i++){
+            int temp = 0;
+
+            if(i-2 >= 0)
+                temp = dp[i-2];
+
+            int include = nums[i] + temp;
+            int exclude = 0 + dp[i-1];
+
+            dp[i] = max(include,exclude);
+        }   
+        return dp[n];
+    }
+
+
+    int spaceOpt(vector<int>&nums, int n){
+        int prev2 = 0;
+        int prev1 = nums[0];
+        int curr;
+
+        for(int i=1;i<=n;i++){
+            int temp = 0;
+
+            if(i-2 >= 0)
+                temp = prev2;
+
+            int include = nums[i] + prev2;
+            int exclude = 0 + prev1;
+
+            curr = max(include,exclude);
+            prev2 = prev1;
+            prev1 = curr;
+        }
+        return prev1;
+    }
+
+    int rob(vector<int>& nums) {
+        // // RECURSIVELY
+        //[] int n = nums.size() - 1;
+        // int ans = RecSolve(nums,n);
+
+
+        // // DP : TOP-DOWN APPROACH
+        // int n = nums.size() - 1;
+        // vector<int> dp(n+1, -1);        // STEP - 1
+        // int ans = TopDown(nums,n,dp);
+
+
+        // // DP : BOTTOM-UP APPROACH
+        // int n = nums.size() - 1;
+        // int ans = BottomUp(nums,n);
+
+
+        // DP : SPACE OPTIMIZATION
+        int n = nums.size() - 1;
+        int ans = spaceOpt(nums,n);
+
+        return ans;
+    }
+};
