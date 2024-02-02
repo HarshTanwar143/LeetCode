@@ -1,0 +1,127 @@
+class Solution {
+public:
+
+    bool solveRec(vector<int>&nums,int target, int index){
+        // Base case
+        if(index >= nums.size())
+            return 0;
+
+        if(target < 0)
+            return 0;
+
+        if(target == 0)
+            return true;
+
+        // Recursive calls
+        // 2 states are changed, so it is a 2-D dp
+        bool include = solveRec(nums,target - nums[index],index + 1);
+        bool exclude = solveRec(nums,target,index + 1);
+        return include || exclude;
+    }
+
+
+
+    bool solveMemo(vector<int>&nums,int target, int index, vector<vector<int>>&dp){
+        // Base case
+        if(index >= nums.size())
+            return 0;
+
+        if(target < 0)
+            return 0;
+
+        if(target == 0)
+            return true;
+
+        if(dp[index][target] != -1){
+            return dp[index][target];
+        }
+
+        // solveMemo calls
+        bool include = solveMemo(nums,target - nums[index],index + 1,dp);
+        bool exclude = solveMemo(nums,target,index + 1,dp);
+        dp[index][target] = (include || exclude);
+        return dp[index][target];
+    }
+
+
+    bool solveTabulation(vector<int>&nums,int target, int index){
+        int n = nums.size();
+        vector<vector<int> > dp(n+1, vector<int>(target+1, 0));
+
+        // Base case
+        for(int i = 0;i<n;i++){
+            dp[i][0] = 1;
+        }
+
+
+        // logic
+        for(int index = n-1;index >= 0;index--){
+            for(int t = 1;t <= target;t++){
+                bool include = 0;
+                if(t-nums[index] >= 0)
+                    include = dp[index + 1][t - nums[index]];
+
+                bool exclude = dp[index + 1][t];
+                dp[index][t] = (include || exclude);
+            }
+        }
+
+        return dp[0][target];
+    }
+
+        bool solveTabulationSO(vector<int>&nums,int target){
+        int n = nums.size();
+        vector<int> curr(target+1,0);
+        vector<int> next(target+1,0);
+
+        // Base case
+        curr[0] = 1;
+        next[0] = 1;
+
+        // logic
+        for(int index = n-1;index >= 0;index--){
+            for(int t = 1;t <= target;t++){
+                bool include = 0;
+                if(t-nums[index] >= 0)
+                    include = next[t - nums[index]];
+
+                bool exclude = next[t];
+                curr[t] = (include || exclude);
+            }
+            // shifting (important)
+            next = curr;
+        }
+
+        return curr[target];
+    }
+
+
+
+    bool canPartition(vector<int>& nums) {
+        if(nums.size() == 0)
+            return false;
+
+        int sum = 0;
+        for(int i=0;i<nums.size();++i){
+            sum += nums[i];
+        }
+
+        // if sum is odd, it cannot divide in equal parts (REMEMBER POINT)
+        if(sum & 1){
+            return 0;
+        }
+
+        int target = sum/2;
+        int index = 0;
+        // bool ans = solveRec(nums,target,index);
+
+        // vector<vector<int> > dp(nums.size(),vector<int>(target+1, -1));
+        // bool ans = solveMemo(nums,target,index,dp);
+
+        // bool ans = solveTabulation(nums,target,index);
+
+        bool ans = solveTabulationSO(nums,target);
+
+        return ans;
+    }
+};
