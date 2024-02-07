@@ -1,0 +1,98 @@
+class Solution {
+public:
+
+    int solveRec(vector<int>&nums,int prev,int curr){
+        // Base Case
+        if(curr >= nums.size()){
+            return 0;
+        }
+
+        // Recursive Logic
+        int include = 0;
+        if(prev == -1 || nums[prev] < nums[curr]){
+            include = 1 + solveRec(nums,curr, curr+1);
+        }
+
+        int exclude = 0 + solveRec(nums,prev,curr+1);
+
+        return max(include,exclude);
+    }
+
+
+    int solveMem(vector<int>&nums,int prev,int curr,vector<vector<int> >&dp){
+        if(curr >= nums.size()){
+            return 0;
+        }
+
+        if(dp[curr][prev+1] != -1){
+            return dp[curr][prev+1];
+        }
+
+        int include = 0;
+        // Because i already checked prev for -1. I didn't increment prev by +1 
+        if(prev == -1 || nums[prev] < nums[curr]){
+            include = 1 + solveMem(nums,curr, curr+1,dp);
+        }
+
+        int exclude = solveMem(nums,prev,curr+1,dp);
+
+        dp[curr][prev+1] = max(include,exclude);
+        return dp[curr][prev+1];
+    }
+
+    int solveTab(vector<int>&nums){
+        int n = nums.size();
+        vector<vector<int> > dp(n+1, vector<int>(n+1,0));
+
+        for(int curr = n-1;curr >= 0;curr--){
+            for(int prev = curr-1;prev >= -1;prev--){
+                int include = 0;
+                if(prev == -1 || nums[prev] < nums[curr]){
+                    include = 1 + dp[curr+1][curr+1];
+                }
+
+                int exclude = dp[curr+1][prev+1];
+
+                dp[curr][prev+1] = max(include,exclude);
+            }
+        }
+        return dp[0][0];
+    }
+
+
+    int solveTabSO(vector<int>&nums){
+        int n = nums.size();
+        vector<int>currRow(n+1,0);
+        vector<int>nextRow(n+1,0);
+
+        for(int curr = n-1;curr >= 0;curr--){
+            for(int prev = curr-1;prev >= -1;prev--){
+                int include = 0;
+                if(prev == -1 || nums[prev] < nums[curr]){
+                    include = 1 + nextRow[curr+1];
+                }
+
+                int exclude = nextRow[prev+1];
+
+                currRow[prev+1] = max(include,exclude);
+            }
+            // shifting
+            nextRow = currRow;
+        }
+        return nextRow[0];
+    }
+
+    int lengthOfLIS(vector<int>& nums) {
+        int prev = -1;
+        int curr = 0;
+        // return solveRec(nums,prev,curr);
+
+        // int n = nums.size();
+        // vector<vector<int> > dp(n+10,vector<int>(n+10,-1));
+        // return solveMem(nums,prev,curr,dp);
+
+        // return solveTab(nums);
+
+        return solveTabSO(nums);
+    }
+};
