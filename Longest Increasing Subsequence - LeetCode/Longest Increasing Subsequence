@@ -82,6 +82,23 @@ public:
         return nextRow[0];
     }
 
+    int OptimalBinarySearch(vector<int>&nums){
+        vector<int>LongSub;
+
+        LongSub.push_back(nums[0]);
+        for(int i=1;i<nums.size();i++){
+            if(nums[i] > LongSub.back()){
+                LongSub.push_back(nums[i]);
+            }
+            else{
+                int LowerIndex = lower_bound(LongSub.begin(),LongSub.end(),nums[i]) - LongSub.begin();
+                LongSub[LowerIndex] = nums[i];
+            }
+        }
+        
+        return LongSub.size();
+    }
+
     int lengthOfLIS(vector<int>& nums) {
         int prev = -1;
         int curr = 0;
@@ -93,6 +110,8 @@ public:
 
         // return solveTab(nums);
 
-        return solveTabSO(nums);
+        // return solveTabSO(nums);
+
+        return OptimalBinarySearch(nums);
     }
 };
