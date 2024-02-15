@@ -1,0 +1,79 @@
+class Solution {
+public:
+
+    // BY RECURSION
+    int squareCount(int n){
+        // Base condition
+        if(n <= 0)  return 0;
+
+        int ans = INT_MAX;
+        int i = 1;
+        int end = sqrt(n);
+        while(i <= end){
+            int perfectSquare = i*i;
+            int numCount = 1 + squareCount(n - perfectSquare);
+            ans = min(ans,numCount);
+            i++;
+        }
+
+        return ans;
+    }
+
+    // BY DP - MEMOISATION
+    int squareCountMem(int n, vector<int>&dp){
+        // Base condition
+        if(n <= 0)  return 0;
+
+        if(dp[n] != -1)
+            return dp[n];
+
+        int ans = INT_MAX;
+        int i = 1;
+        int end = sqrt(n);
+        while(i <= end){
+            int perfectSquare = i*i;
+            int numCount = 1 + squareCountMem(n - perfectSquare,dp);
+            ans = min(ans,numCount);
+            i++;
+        }
+
+        dp[n] = ans;
+        return dp[n];
+    }
+
+
+    // BY TABULAION
+    int squareCountTab(int n,vector<int>&dp){
+        dp[0] = 0;       // NOT NECESSARY (AS WE INITIALIZE EVERY INDEX WITH 0)
+
+        for(int i = 1;i<=n;i++){
+            int ans = INT_MAX;
+            int start = 1;
+            int end = sqrt(n);
+            while(start <= end){
+                int perfectSquare = start*start;
+                if(i - perfectSquare >= 0){
+                    int numCount = 1 + dp[i - perfectSquare];
+                    ans = min(ans,numCount);
+                }
+                start++;
+            }
+            dp[i] = ans;
+        }
+
+        return dp[n];
+    }
+
+    int numSquares(int n) {
+        // // method - 1
+        // return squareCount(n);
+
+        // // method - 2
+        // vector<int> dp(n+1,-1);
+        // return squareCountMem(n,dp);
+
+        // // method - 3
+        vector<int> dp(n+1,0);
+        return squareCountTab(n,dp);
+    }
+};
