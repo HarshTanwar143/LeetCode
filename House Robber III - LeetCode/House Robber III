@@ -1,0 +1,55 @@
+
+class Solution {
+public:
+
+    int solveRE(TreeNode* root){
+        if(!root)
+            return 0;
+
+        int rob = 0,notRob = 0;
+
+        // rob the current house
+        rob += root->val;
+        if(root->left)
+            rob += solveRE(root->left->left) + solveRE(root->left->right);
+        if(root->right)
+            rob += solveRE(root->right->left) + solveRE(root->right->right);
+
+        // Don't rob the current house
+        notRob += solveRE(root->left) + solveRE(root->right);
+        
+        return max(rob,notRob);
+    }
+
+    int solveMem(TreeNode* root,unordered_map<TreeNode*,int>&dp){
+        if(!root)
+            return 0;
+
+        if(dp.find(root) != dp.end())
+            return dp[root];
+
+        int rob = 0,notRob = 0;
+        // rob the current house
+        rob += root->val;
+        if(root->left)
+            rob += solveMem(root->left->left,dp) + solveMem(root->left->right,dp);
+        if(root->right)
+            rob += solveMem(root->right->left,dp) + solveMem(root->right->right,dp);
+
+        // Don't rob the current house
+        notRob += solveMem(root->left,dp) + solveMem(root->right,dp);
+        
+        dp[root] = max(rob,notRob);
+        return dp[root];
+    }
+
+
+    int rob(TreeNode* root) {
+        // // method - 1 (TLE)
+        // return solveRE(root);
+
+        // method - 2
+        unordered_map<TreeNode*,int> dp;
+        return solveMem(root,dp);
+    }
+};
