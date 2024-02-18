@@ -1,0 +1,82 @@
+class Solution {
+public:
+
+    bool check(string word,vector<string>&wordDict){
+        for(auto i : wordDict){
+            if(word == i)
+                return true;
+        }
+        return false;
+    }
+
+    // By Recursion
+    bool solveRE(string s,vector<string>&wordDict,int start){
+        if(start == s.size())
+            return true;
+
+        bool flag = false;  
+        string word = "";
+        for(int i=start;i<s.size();i++){
+            word += s[i];
+            if(check(word,wordDict)){
+                flag = flag || solveRE(s,wordDict,i+1);
+            }
+        }
+
+        return flag;
+    }
+
+    // By Memoisation
+    bool solveMem(string s,vector<string>&wordDict,int start,vector<int>&dp){
+        if(start == s.size())
+            return true;
+
+        if(dp[start] != -1)
+            return dp[start];
+
+        bool flag = false;  
+        string word = "";
+        for(int i=start;i<s.size();i++){
+            word += s[i];
+            if(check(word,wordDict)){
+                flag = flag || solveMem(s,wordDict,i+1,dp);
+            }
+        }
+
+        dp[start] = flag;
+        return dp[start];
+    }
+
+    
+    // By Tabulation
+    bool solveTab(string s,vector<string>&wordDict,vector<int>&dp){
+        for(int start = s.size()-1;start >= 0; start--){
+            bool flag = false;  
+            string word = "";
+            for(int i=start;i<s.size();i++){
+                word += s[i];
+                if(check(word,wordDict)){
+                    flag = flag || dp[i+1];
+                }
+            }
+
+            dp[start] = flag;
+        }
+        return dp[0];
+    }
+
+    // // we can't do space opt. as our i is changing inside a loop, so it vary.
+
+    bool wordBreak(string s, vector<string>& wordDict) {
+        // // method - 1
+        // return solveRE(s,wordDict,0);
+
+        // // method - 2
+        // vector<int> dp(s.size(),-1);
+        // return solveMem(s,wordDict,0,dp);
+
+        // //method - 3
+        vector<int> dp(s.size()+1,true); // acc. to base case give initialization as true
+        return solveTab(s,wordDict,dp);
+    }
+};
