@@ -1,0 +1,67 @@
+class Solution {
+public:
+
+    // By Recursion:
+    int solveRE(vector<int>&nums,int start,int end){
+        if(start >= end)
+            return nums[start];
+
+        int chooseFromStart = nums[start] - solveRE(nums,start+1,end);
+        int chooseFromEnd = nums[end] - solveRE(nums,start,end-1);
+
+        return max(chooseFromStart,chooseFromEnd);
+    }
+
+  
+    // By DP - Memoisation
+    int solveMem(vector<int>&nums,int start,int end,vector<vector<int> >&dp){
+        if(start >= end)
+            return nums[start];
+
+        if(dp[start][end] != -1)
+            return dp[start][end];
+
+        int chooseFromStart = nums[start] - solveMem(nums,start+1,end,dp);
+        int chooseFromEnd = nums[end] - solveMem(nums,start,end-1,dp);
+
+        dp[start][end] = max(chooseFromStart,chooseFromEnd);
+        return dp[start][end];
+    }
+
+
+    // By DP - Tabulation
+    int solveTab(vector<int>&nums,vector<vector<int> >&dp){
+        // Base condition
+        for(int i = 0;i<nums.size();i++){
+            dp[i][i] = nums[i];
+        }
+
+        int i = nums.size() ;
+        for(int start = nums.size()-1;start >= 0;start--){
+            for(int end = i;end < nums.size(); end++){
+                int chooseFromStart = nums[start] - dp[start+1][end];
+                int chooseFromEnd = nums[end] - dp[start][end-1];
+
+                dp[start][end] = max(chooseFromStart,chooseFromEnd);
+            }
+            --i;
+        }
+
+        return dp[0][nums.size()-1];
+    }
+
+
+
+    bool predictTheWinner(vector<int>& nums) {
+        // // method - 1
+        // return solveRE(nums,0,nums.size()-1) >= 0;
+
+        // // method - 2
+        // vector<vector<int> > dp(nums.size(),vector<int>(nums.size(),-1));
+        // return solveMem(nums,0,nums.size()-1,dp) >= 0;
+
+        // // method - 3
+        vector<vector<int> > dp(nums.size()+1,vector<int>(nums.size()+1,0));
+        return solveTab(nums,dp) >= 0;
+    }
+};
