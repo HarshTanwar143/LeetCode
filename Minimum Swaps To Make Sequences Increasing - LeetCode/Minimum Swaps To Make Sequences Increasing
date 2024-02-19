@@ -1,0 +1,87 @@
+class Solution {
+public:
+    // By Recursion (try to swap and un-swap)
+    int solveRE(vector<int>&nums1,vector<int>&nums2,int i,int p1,int p2){
+        if(i == nums1.size())
+            return 0;
+
+        int swap = INT_MAX,noSwap = INT_MAX;
+        // swap
+        if(p1 < nums2[i] && p2 < nums1[i]){
+            swap = 1 + solveRE(nums1,nums2,i+1,nums2[i],nums1[i]);
+        }
+        // no Swap
+        if(p1 < nums1[i] && p2 < nums2[i]){
+            noSwap = solveRE(nums1,nums2,i+1,nums1[i],nums2[i]);
+        }
+        
+        return min(swap,noSwap);
+    }
+
+    // By Memoisation
+    int solveMem(vector<int>&nums1,vector<int>&nums2,int i,int p1,int p2,vector<vector<int>>&dp,int isSwap){
+        if(i == nums1.size())
+            return 0;
+
+        if(dp[i][isSwap] != -1)
+            return dp[i][isSwap];
+
+        int swap = INT_MAX,noSwap = INT_MAX;
+        // swap
+        if(p1 < nums2[i] && p2 < nums1[i]){
+            swap = 1 + solveMem(nums1,nums2,i+1,nums2[i],nums1[i],dp,1);
+        }
+        // no Swap
+        if(p1 < nums1[i] && p2 < nums2[i]){
+            noSwap = solveMem(nums1,nums2,i+1,nums1[i],nums2[i],dp,0);
+        }
+        
+        dp[i][isSwap] = min(swap,noSwap);
+        return dp[i][isSwap];
+    }
+
+    // By Tabulation
+    int solveTab(vector<int>&nums1, vector<int>&nums2){
+        vector<vector<int>> dp(nums1.size() + 1,vector<int>(2,0));
+
+        for(int i = nums1.size()-1; i >= 1; i--){
+            for(int j = 1;j>=0;j--){
+                int p1 = nums1[i-1];
+                int p2 = nums2[i-1];
+
+                if(j){
+                    swap(p1,p2);
+                }
+
+                int swap = INT_MAX,noSwap = INT_MAX;
+                // swap
+                if(p1 < nums2[i] && p2 < nums1[i]){
+                    swap = 1 + dp[i+1][1];
+                }
+                // no Swap
+                if(p1 < nums1[i] && p2 < nums2[i]){
+                    noSwap = dp[i+1][0];
+                }
+                
+                dp[i][j] = min(swap,noSwap);
+            }
+        }
+
+        return dp[1][0];
+    }
+
+    int minSwap(vector<int>& nums1, vector<int>& nums2) {
+        // // method - 1
+        // return solveRE(nums1,nums2,0,-1,-1);
+
+        // // method - 2
+        // vector<vector<int>> dp(nums1.size(),vector<int>(2,-1));
+        // return solveMem(nums1,nums2,0,-1,-1,dp,0);
+
+        // // method - 3
+        nums1.insert(nums1.begin(),-1);
+        nums2.insert(nums2.begin(),-1);
+        return solveTab(nums1,nums2);
+    }
+};
+
