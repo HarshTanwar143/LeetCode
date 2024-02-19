@@ -1,0 +1,95 @@
+class Solution {
+public:
+    void convert(vector<string>&strs,vector<pair<int,int>>&numsCount){
+        for(auto str : strs){
+            int zeros = 0, ones = 0;
+            for(auto ch : str){
+                if(ch == '0')   ++zeros;
+                else    ++ones;
+            }
+            numsCount.push_back({zeros,ones});
+        }
+    }
+
+    // By Recursion
+    int solveRE(vector<pair<int,int>>&numsCount,int i,int m,int n){
+        // Base condition
+        if(i == numsCount.size())
+            return 0;
+
+        int zeros = numsCount[i].first;
+        int ones = numsCount[i].second;
+        int include = 0, exclude = 0;
+
+        if(m-zeros >= 0 && n-ones >= 0){
+            include = 1 + solveRE(numsCount,i+1,m-zeros,n-ones);
+        }
+        exclude = solveRE(numsCount,i+1,m,n);
+
+        return max(include,exclude);
+    }
+
+
+    // By Memoisation
+    int solveMem(vector<pair<int,int>>&numsCount,int i,int m,int n,vector<vector<vector<int>>>&dp){
+        // Base condition
+        if(i == numsCount.size())
+            return 0;
+
+        if(dp[i][m][n] != -1)
+            return dp[i][m][n];
+
+        int zeros = numsCount[i].first;
+        int ones = numsCount[i].second;
+        int include = 0, exclude = 0;
+
+        if(m-zeros >= 0 && n-ones >= 0){
+            include = 1 + solveMem(numsCount,i+1,m-zeros,n-ones,dp);
+        }
+        exclude = solveMem(numsCount,i+1,m,n,dp);
+
+        dp[i][m][n] = max(include,exclude);
+        return dp[i][m][n];
+    }
+
+    // By Tabulation
+    int solveTab(vector<pair<int,int>>&numsCount,int m,int n){
+        vector<vector<vector<int>>>dp (numsCount.size()+1,vector<vector<int>>(m+1,vector<int>(n+1,0)));
+
+        for(int i = numsCount.size()-1;i >= 0;i--){
+            for(int zerosIndex = 0 ;zerosIndex <= m;zerosIndex++){
+                for(int onesIndex = 0;onesIndex <= n;onesIndex++){
+                    int zeros = numsCount[i].first;
+                    int ones = numsCount[i].second;
+                    int include = 0, exclude = 0;
+
+                    if(zerosIndex-zeros >= 0 && onesIndex-ones >= 0){
+                        include = 1 + dp[i+1][zerosIndex-zeros][onesIndex-ones];
+                    }
+                    exclude = dp[i+1][zerosIndex][onesIndex];
+
+                    dp[i][zerosIndex][onesIndex] = max(include,exclude);
+                }
+            }
+        }
+        
+        return dp[0][m][n];
+    }
+
+    int findMaxForm(vector<string>& strs, int m, int n) {
+        // convert strs into a vector of 0's and 1's
+        vector<pair<int,int>> numsCount;
+        convert(strs,numsCount);
+
+        // // method - 1
+        // return solveRE(numsCount,0,m,n);
+
+        // // method - 2
+        // vector<vector<vector<int>>>dp (strs.size(),vector<vector<int>>(m+1,vector<int>(n+1,-1)));
+        // return solveMem(numsCount,0,m,n,dp);
+
+
+        // // method - 3
+        return solveTab(numsCount,m,n);
+    }
+};
