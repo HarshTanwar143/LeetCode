@@ -1,0 +1,76 @@
+class Solution {
+public:
+
+    vector<string> solveRE(string s,map<string,bool>&dict,int i){
+        if(i >= s.size())
+            return {""};
+
+        vector<string> ans;
+        string word;
+
+        for(int j = i;j < s.size();j++){
+            word += s[j];
+            if(dict.find(word) == dict.end()){
+                continue;
+            }
+
+            // found a valid word
+            vector<string> RightWords = solveRE(s,dict,j+1);
+            for(auto eachWord : RightWords){
+                string endPart;
+                if(eachWord.size() > 0)
+                    endPart = " " + eachWord;
+                
+                ans.push_back(word + endPart);
+            }
+        }
+
+        return ans;
+    }
+
+
+    // By Memoisation
+    unordered_map<int,vector<string> > dp;
+
+    vector<string> solveMem(string s,map<string,bool>&dict,int i){
+        if(i >= s.size())
+            return {""};
+
+        if(dp.find(i) != dp.end())
+            return dp[i];
+
+        vector<string> ans;
+        string word;
+
+        for(int j = i;j < s.size();j++){
+            word += s[j];
+            if(dict.find(word) == dict.end()){
+                continue;
+            }
+
+            // found a valid word
+            vector<string> RightWords = solveMem(s,dict,j+1);
+            for(auto eachWord : RightWords){
+                string endPart;
+                if(eachWord.size() > 0)
+                    endPart = " " + eachWord;
+                
+                ans.push_back(word + endPart);
+            }
+        }
+
+        return dp[i] = ans;
+    }
+
+    vector<string> wordBreak(string s, vector<string>& wordDict) {
+        map<string,bool> dict;
+        for(auto word : wordDict){
+            dict[word] = true;
+        }
+
+        // return solveRE(s,dict,0);
+
+        // // By Memoisation
+        return solveMem(s,dict,0);
+    }
+};
