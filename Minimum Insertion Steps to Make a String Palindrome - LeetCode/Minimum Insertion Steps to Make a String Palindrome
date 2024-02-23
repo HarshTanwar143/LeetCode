@@ -1,0 +1,35 @@
+class Solution {
+public:
+
+    int solveTabSO(string&a,string&b) {
+        vector<int> next(b.length()+1,0);
+        vector<int> curr(b.length()+1,0);
+
+        for(int i = a.length()-1;i>=0;i--){
+            for(int j = b.length()-1;j>=0;j--){
+                int ans = 0;
+                if(a[i] == b[j]) ans = 1 + next[j+1];
+                else ans = 0 + max(next[j],curr[j+1]);
+                curr[j] = ans;
+            }
+            // shifting
+            next = curr;
+        }
+        return curr[0];
+    }
+
+
+    int longestPalindromeSubseq(string s) {
+        string first = s;
+        reverse(s.begin(),s.end());
+        string second = s;
+        int i = 0, j = 0;
+        return solveTabSO(first,second);
+    }
+
+    int minInsertions(string s) {
+        int LPS_length = longestPalindromeSubseq(s);
+        int insertionToDo = s.size() - LPS_length;
+        return insertionToDo;
+    }
+};
