@@ -1,0 +1,44 @@
+class Solution {
+public:
+
+    int OptimalBinarySearch(vector<int>&nums, vector<int>&lis){
+        if(nums.size() == 0)
+            return 0;
+        vector<int>LongSub;
+        lis.push_back(1);
+        LongSub.push_back(nums[0]);
+
+        for(int i=1;i<nums.size();i++){
+            if(nums[i] > LongSub.back()){
+                LongSub.push_back(nums[i]);
+                lis.push_back(LongSub.size());
+            }
+            else{
+                int LowerIndex = lower_bound(LongSub.begin(),LongSub.end(),nums[i]) - LongSub.begin();
+                LongSub[LowerIndex] = nums[i];
+                lis.push_back(LowerIndex + 1);
+            }
+        }
+        
+        return LongSub.size();
+    }
+
+    int minimumMountainRemovals(vector<int>& nums) {
+        vector<int>lis, lds;
+
+        // make lis and ldr array by taking each element as pivot
+        OptimalBinarySearch(nums,lis);
+        reverse(nums.begin(),nums.end());
+        OptimalBinarySearch(nums,lds);
+
+        // main logic
+        int largestMountain = INT_MIN;
+        for(int i = 0;i < nums.size();++i){
+            if(lis[i] == 1 || lds[nums.size()-i-1] == 1) continue;
+            largestMountain = max(largestMountain, lis[i]+lds[nums.size()-i-1] - 1);
+        }
+
+        int minRemovals = nums.size() - largestMountain;
+        return minRemovals;
+    }
+};
