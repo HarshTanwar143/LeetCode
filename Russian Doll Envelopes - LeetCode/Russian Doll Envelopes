@@ -1,0 +1,61 @@
+class Solution {
+public:
+    int solveRE(vector<vector<int>>&nums,int prev,int curr){
+        if(curr >= nums.size()) return 0;
+
+        int include = 0;
+        if(prev == -1 || nums[prev][0] < nums[curr][0] && nums[prev][1] < nums[curr][1])
+        include = 1 + solveRE(nums,curr,curr+1);
+
+        int exclude = 0 + solveRE(nums,prev,curr+1);
+        return max(include,exclude);
+    }
+
+    int solveMem(vector<vector<int>>&nums,int prev,int curr,vector<vector<int>>&dp){
+        if(curr >= nums.size()) return 0;
+        if(dp[prev+1][curr] != -1)  return dp[prev+1][curr];
+
+        int include = 0;
+        if(prev == -1 || nums[prev][0] < nums[curr][0] && nums[prev][1] < nums[curr][1])
+        include = 1 + solveMem(nums,curr,curr+1,dp);
+
+        int exclude = 0 + solveMem(nums,prev,curr+1,dp);
+        return dp[prev+1][curr] = max(include,exclude);
+    }
+
+    static bool comp(vector<int>&a,vector<int>&b){
+        if(a[0] == b[0]) return a[1] > b[1];
+        return a[0] < b[0];
+    }
+
+    int SolveOptimal(vector<vector<int>>&nums){
+        sort(nums.begin(),nums.end(),comp);
+        if(nums.size() == 0) return 0;
+
+        vector<int>ans;
+        ans.push_back(nums[0][1]);
+        for(int i = 1;i < nums.size();i++){
+            if(nums[i][1] > ans.back()){
+                ans.push_back(nums[i][1]);
+            }
+            else{
+                int index = lower_bound(ans.begin(),ans.end(),nums[i][1]) - ans.begin();
+                ans[index] = nums[i][1];
+            }
+        }
+        return ans.size();
+    }
+
+
+    int maxEnvelopes(vector<vector<int>>& envelopes) {
+        // sort(envelopes.begin(),envelopes.end());
+        // return solveRE(envelopes,-1,0);
+
+        // // By Memoisation
+        // vector<vector<int>> dp(envelopes.size()+1,vector<int>(envelopes.size()+1,-1));
+        // return solveMem(envelopes,-1,0,dp);
+
+        // // By Binary Search (MOST OPTIMAL SOLUTION)
+        return SolveOptimal(envelopes);
+    }
+};
