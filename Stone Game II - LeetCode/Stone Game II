@@ -1,0 +1,74 @@
+class Solution {
+public:
+    int solve(vector<int>&piles,int i,int M,int Alice){
+        if(i >= piles.size()) return 0;
+
+        int ans = Alice ? INT_MIN : INT_MAX;
+        int total = 0;
+
+        for(int X = 1;X <= 2*M;X++){
+            if(i+X-1 >= piles.size()) break;
+            total += piles[i+X-1];
+            if(Alice)
+                ans = max(ans,total + solve(piles,i+X,max(X,M),!Alice));
+            else // min issliye becz Bob tries to gain max, to alice ke ans ko min hi milega na
+                ans = min(ans,solve(piles,i+X,max(X,M),!Alice));
+        }
+        return ans;
+    }
+
+
+    int solveTD(vector<int>&piles,int i,int M,int Alice,vector<vector<vector<int>>> &dp){
+        if(i >= piles.size()) return 0;
+        if(dp[i][M][Alice] != -1) return dp[i][M][Alice];
+
+        int ans = Alice ? INT_MIN : INT_MAX;
+        int total = 0;
+
+        for(int X = 1;X <= 2*M;X++){
+            if(i+X-1 >= piles.size()) break;
+            total += piles[i+X-1];
+            if(Alice)
+                ans = max(ans,total + solveTD(piles,i+X,max(X,M),!Alice,dp));
+            else 
+                ans = min(ans,solveTD(piles,i+X,max(X,M),!Alice,dp));
+        }
+        return dp[i][M][Alice] = ans;
+    }
+
+    int solveBU(vector<int>&piles){
+        vector<vector<vector<int>>> dp(piles.size()+1,vector<vector<int>>(piles.size()+1,vector<int>(2,0)));
+
+        for(int i = piles.size()-1;i >= 0;--i){
+            for(int M = piles.size();M >= 1;--M){
+                for(int Alice = 0;Alice <= 1;Alice++){
+                    int ans = Alice ? INT_MIN : INT_MAX;
+                    int total = 0;
+
+                    for(int X = 1;X <= 2*M;X++){
+                        if(i+X-1 >= piles.size()) break;
+                        total += piles[i+X-1];
+                        if(Alice)
+                            ans = max(ans,total + dp[i+X][max(X,M)][!Alice]);
+                        else 
+                            ans = min(ans, dp[i+X][max(X,M)][!Alice]);
+                    }
+                    dp[i][M][Alice] = ans;
+                }
+            }
+        }
+
+        return dp[0][1][1];
+    }
+
+    int stoneGameII(vector<int>& piles) {
+        // return solve(piles,0,1,true);
+
+        // // By Memoisation
+        // vector<vector<vector<int>>> dp(piles.size()+1,vector<vector<int>>(piles.size()+1,vector<int>(2,-1)));
+        // return solveTD(piles,0,1,true,dp);
+
+        // // By Tabulation
+        return solveBU(piles);
+    }
+};
