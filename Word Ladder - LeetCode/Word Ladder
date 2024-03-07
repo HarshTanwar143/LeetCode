@@ -1,0 +1,46 @@
+class Solution {
+public:
+    int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
+        // inserting the first or begining word in to the queue
+        queue<pair<string,int>> q;
+        q.push({beginWord,1});
+        // decalring unordered set
+        unordered_set<string> st(wordList.begin(),wordList.end());
+        // removing the inserted begining word from the set
+        st.erase(beginWord);
+
+        while(!q.empty()){
+            pair<string,int> ftNode = q.front();
+            q.pop();
+
+            string currWord = ftNode.first;
+            int currCount = ftNode.second;
+
+            // check is it match to the destination or the endWord
+            if(currWord == endWord){
+                return currCount;
+            }
+
+            // finding other matching words
+            for(int i = 0;i < currWord.length();++i){
+                // save this character, as the below loop is over it will change the word.
+                char oldChar = currWord[i];
+
+                for(char ch = 'a'; ch <= 'z';++ch){
+                    currWord[i] = ch;
+                    // check is this word present in the set or list
+                    if(st.find(currWord) != st.end()){
+                        q.push({currWord,currCount+1});
+                        // Now, also remove this word from this set
+                        st.erase(currWord);
+                    }
+                }
+
+                // insert the oldChar into the currWord, so it'll not change.
+                currWord[i] = oldChar;
+            }
+        }
+
+        return 0;
+    }
+};
