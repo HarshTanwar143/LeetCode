@@ -1,0 +1,52 @@
+class Solution {
+private:
+    void bfs(map<pair<int,int>,bool> &visited,int row,int col,vector<vector<char>>& grid){
+        queue<pair<int,int>> q;
+        q.push({row,col});
+        visited[{row,col}] = true;
+
+        while(!q.empty()){
+            pair<int,int> ftNode = q.front();
+            q.pop();
+
+            int x = ftNode.first;
+            int y = ftNode.second;
+
+            int dx[] = {-1,0,1,0};
+            int dy[] = {0,1,0,-1};
+            for(int i = 0;i < 4;i++){
+                int newX = x + dx[i];
+                int newY = y + dy[i];
+
+                if(newX >= 0 && newY >= 0 && newX < grid.size() && newY < grid[0].size() ){
+                    if(!visited[{newX,newY}] && grid[newX][newY] == '1') {
+                        visited[{newX,newY}] = true;
+                        q.push({newX,newY});
+                    }
+                }
+            }
+
+        }
+    }
+
+
+public:
+    int numIslands(vector<vector<char>>& grid) {
+        map<pair<int,int>,bool> visited;
+        int count = 0;
+
+        // traversing on each node because we need {x,y} or {row,col}
+        for(int row = 0;row < grid.size();row++){
+            int n = grid[row].size();
+            for(int col = 0;col < n;col++){
+                // IMP : only check those cells which having "1" and not visited yet.
+                if(grid[row][col] == '1' && !visited[{row,col}]){
+                    bfs(visited,row,col,grid);
+                    ++count;
+                }
+            }
+        }
+
+        return count;
+    }
+};
