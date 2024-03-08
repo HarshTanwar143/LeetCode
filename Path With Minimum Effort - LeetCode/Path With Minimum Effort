@@ -1,0 +1,50 @@
+class Solution {
+public:
+    int minimumEffortPath(vector<vector<int>>& heights) {
+        vector<vector<int>> dist(heights.size(),vector<int>(heights[0].size(),INT_MAX));
+        // Createing min heap by priority queue, in which we store the pairs and extract min dist pair
+        priority_queue<pair<int,pair<int,int>> , vector<pair<int,pair<int,int>>> ,
+         greater<pair<int,pair<int,int>>> > pq;
+
+        // inserting first pair
+        dist[0][0] = 0;
+        pq.push({0,{0,0}});
+
+        while(!pq.empty()){
+            auto ftNode = pq.top();
+            pq.pop();
+
+            int frontNodeDist = ftNode.first;
+            int x = ftNode.second.first;
+            int y = ftNode.second.second;
+
+            // check for answer
+            if(x == heights.size()-1 && y == heights[0].size()-1){
+                return frontNodeDist;
+            }
+
+            // for traversing 4 adjacent blocks
+            int xi[] = {-1,0,1,0};
+            int yi[] = {0,1,0,-1};
+
+            for(int i = 0;i < 4;++i){
+                int newX = x + xi[i];
+                int newY = y + yi[i];
+
+                // check whether these blocks are inside the matrix or not
+                if(newX >= 0 && newY >= 0 && newX < heights.size() && newY < heights[0].size()){
+                    int currNodeDist = abs(heights[newX][newY] - heights[x][y]);
+                    int newMaxDist = max(currNodeDist,frontNodeDist);
+
+                    if(dist[newX][newY] > newMaxDist){
+                        dist[newX][newY] = newMaxDist;
+                        pq.push({newMaxDist,{newX,newY}});
+                    }
+                }
+
+            }
+        }
+
+        return 0;
+    }
+};
