@@ -1,0 +1,34 @@
+class Solution {
+private:
+    void traverseDFS(unordered_map<int,bool>&visited,int src,vector<vector<int>>&isConnected){
+        visited[src] = true;
+
+        // checking the connected nodes, they are in col
+        int size = isConnected[0].size();
+        for(int col = 0;col < size;++col){
+            if(src != col && isConnected[src][col] == 1){
+                if(!visited[col]){
+                    traverseDFS(visited,col,isConnected);
+                }
+            }
+        }
+    }
+
+public:
+    int findCircleNum(vector<vector<int>>& isConnected) {
+        unordered_map<int,bool> visited;
+        int count = 0;
+        int n = isConnected.size();
+
+        // check for every node
+        for(int i = 1;i <= n;i++){
+            if(!visited[i-1]){
+                // sent i-1, as it show index not the node
+                traverseDFS(visited,i-1,isConnected);
+                ++count;
+            }
+        }
+
+        return count;
+    }
+};
