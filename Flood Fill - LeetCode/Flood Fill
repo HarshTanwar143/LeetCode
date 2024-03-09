@@ -1,0 +1,31 @@
+class Solution {
+private:
+    void dfs(int x,int y,int oldColor,int newColor,
+    map<pair<int,int>,bool> &vis,vector<vector<int> >&ans){
+        
+        vis[{x,y}] = true;
+        ans[x][y] = newColor;
+
+        int dx[] = {-1,0,1,0};
+        int dy[] = {0,1,0,-1};
+
+        for(int i = 0;i < 4;++i){
+            int newX = x + dx[i];
+            int newY = y + dy[i];
+
+            if(newX >= 0 && newY >= 0 && newX < ans.size() && newY < ans[x].size() 
+            && !vis[{newX,newY}] && ans[newX][newY] == oldColor){
+                dfs(newX,newY,oldColor,newColor,vis,ans);
+            }
+        }
+    }
+
+public:
+    vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc, int color) {
+        int oldColor = image[sr][sc];
+        map<pair<int,int>,bool> vis;
+        vector<vector<int>> ans = image;        // it is good practice to make diff. arr for ans
+        dfs(sr,sc,oldColor,color,vis,ans);
+        return ans;
+    }
+};
