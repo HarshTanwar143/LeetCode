@@ -1,0 +1,55 @@
+class Solution {
+public:
+
+void findBridge(int src,int parent,int timer,vector<int>&low,vector<int>&tin,
+unordered_map<int,bool>&visited,unordered_map<int,list<int>>&adjList,vector<vector<int>>&ans){
+      visited[src] = true;
+      tin[src] = timer;
+      low[src] = timer;
+      timer++;
+
+      for(auto nbr : adjList[src]){
+        // if it is on the parent of src
+        if(nbr == parent){
+          continue;
+        }
+        else if (!visited[nbr]){
+          findBridge(nbr,src,timer,low,tin,visited,adjList,ans);
+          // low update
+          low[src] = min(low[src],low[nbr]);
+          // check for Bridge
+          if(low[nbr] > tin[src]){
+            ans.push_back({src,nbr});
+          }
+        }
+          // else :: means it is not parent and already visited node
+        else{
+          // only update the low
+          low[src] = min(low[src],low[nbr]);
+        }
+      }
+      
+    }
+
+
+
+    vector<vector<int>> criticalConnections(int n, vector<vector<int>>& connections) {
+        // creating adjancy list
+        unordered_map<int,list<int>> adjList;
+        for(int i = 0;i < connections.size();i++){
+            int u = connections[i][0];
+            int v = connections[i][1];
+            adjList[u].push_back(v);
+            adjList[v].push_back(u);
+        }
+
+        vector<vector<int>> ans;
+        int timer = 1;
+        vector<int> low(n);
+        vector<int> tin(n);
+        unordered_map<int,bool> visited;
+        findBridge(0, -1, timer, low, tin, visited, adjList, ans);
+
+        return ans;
+    }
+};
