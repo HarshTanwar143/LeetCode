@@ -1,0 +1,74 @@
+class Solution {
+private:
+    int findParent(vector<int>&parent,int Node){
+        if(parent[Node] == Node)    return Node;
+        return parent[Node] = findParent(parent,parent[Node]);
+    }
+
+    void unionSet(int u, int v, vector<int>&parent, vector<int>&rank){
+        u = findParent(parent,u);
+        v = findParent(parent,v);
+
+        if(rank[u] > rank[v]){
+            rank[u]++;
+            parent[v] = u;
+        }
+        else{
+            rank[v]++;
+            parent[u] = v;
+        }
+    }
+
+public:
+    vector<vector<string>> accountsMerge(vector<vector<string>>& accounts) {
+        int n = accounts.size();
+        vector<int> parent(n);
+        vector<int> rank(n,0);
+        for(int i = 0;i < n;i++){
+            parent[i] = i;
+        }
+
+
+        // creating the parent array i.e. [0,0,2,3] parent array
+        unordered_map<string,int> mp;
+        for(int i = 0;i < n;i++){
+            auto account = accounts[i];
+            for(int j = 1;j < account.size();j++){
+                auto it = mp.find(account[j]);
+                if(it == mp.end()){
+                    mp[account[j]] = i;
+                }
+                else{
+                    unionSet(i, it->second, parent, rank);
+                }
+            }
+        }
+
+
+        unordered_map<int,set<string> >preAns;
+        for(auto it : mp){
+            auto mail = it.first;
+            auto accountNo = it.second;
+
+            accountNo = findParent(parent,accountNo);
+
+            preAns[accountNo].insert(mail);
+        }
+
+        vector<vector<string>> ans;
+        for(auto detail : preAns){
+            auto i = detail.first;
+            auto st = detail.second;
+
+            vector<string> v;
+            v.push_back(accounts[i][0]);
+            for(auto mail : st){
+                v.push_back(mail);
+            }
+
+            ans.push_back(v);
+        }
+
+        return ans;
+    }
+};
