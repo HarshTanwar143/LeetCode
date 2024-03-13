@@ -1,0 +1,66 @@
+class Solution {
+private:
+int Dijkstra(int src,int n,int distanceThreshold,unordered_map<int,list<pair<int,int>>>&adjList){
+    vector<int> dist(n,INT_MAX);
+    set<pair<int,int>> st;
+    int reachableCities = 0;
+
+    // initializing the parameters
+    st.insert(make_pair(0,src));
+    dist[src] = 0;
+
+    // for remaining Nodes, until set is empty
+    while(!st.empty()){
+      auto topElement = *(st.begin());
+      int NodeDistance = topElement.first;
+      int Node = topElement.second;
+      st.erase(st.begin());
+
+      //  that city is not equal to itself and should be less than the threshold
+      if(Node != src && NodeDistance <= distanceThreshold){
+        ++reachableCities;
+      }
+      
+
+      for(auto nbr : adjList[Node]){
+        if(NodeDistance + nbr.second < dist[nbr.first]){
+          auto updatingEleInSet = st.find({dist[nbr.first],nbr.first});
+          if(updatingEleInSet != st.end()){
+            st.erase(updatingEleInSet);
+          }
+          dist[nbr.first] = NodeDistance + nbr.second;
+          st.insert({NodeDistance + nbr.second,nbr.first});
+        }
+      }
+      
+    }
+
+    return reachableCities;
+}
+
+
+public:
+    int findTheCity(int n, vector<vector<int>>& edges, int distanceThreshold) {
+        unordered_map<int,list<pair<int,int>>> adjList;
+        for(auto edge : edges){
+            int u = edge[0];
+            int v = edge[1];
+            int w = edge[2];
+            adjList[u].push_back({v,w});
+            adjList[v].push_back({u,w});
+        }
+
+        int city = 0;
+        int MinCities = INT_MAX;
+
+        for(int i = 0;i < n;i++){
+            int reachableCities = Dijkstra(i,n,distanceThreshold,adjList);
+            if(reachableCities <= MinCities){
+                city = i;
+                MinCities = reachableCities;
+            }
+        }
+
+        return city;
+    }
+};
