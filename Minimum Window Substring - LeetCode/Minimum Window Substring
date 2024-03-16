@@ -1,0 +1,57 @@
+class Solution {
+public:
+    string minWindow(string s, string p) {
+                // Edge case
+        if(s.size() < p.size()) return "";
+        
+        unordered_map<char,int> sm;
+        unordered_map<char,int> pm;
+        
+        
+        // maintain the count of the character of p string
+        for(int i = 0;i < p.size();i++){
+            char ch = p[i];
+            pm[ch]++;
+        }
+        
+        int count = 0;
+        int ansIndex = -1;
+        int ansLen = INT_MAX;
+        int start = 0;
+        
+        for(int i = 0;i < s.size();i++){
+            char ch = s[i];
+            sm[ch]++;
+            
+            // check for valid char
+            if(sm[ch] <= pm[ch]){
+                ++count;
+            }
+            
+            if(count == p.size()){
+                // minimise the window
+                while(sm[s[start]] > pm[s[start]] || pm[s[start]] == 0){
+                    if(sm[s[start]] > pm[s[start]]) 
+                        sm[s[start]]--;
+                        
+                    start++;
+                }
+                
+                // ans update
+                int lengthOfWindow = i - start + 1;
+                if(lengthOfWindow < ansLen){
+                    ansLen = lengthOfWindow;
+                    ansIndex = start;
+                }
+            }
+            
+        }
+        
+        if(ansIndex == -1){
+            return "";
+        }
+        else{
+            return s.substr(ansIndex, ansLen);
+        }
+    }
+};
